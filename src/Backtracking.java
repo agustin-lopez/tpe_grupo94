@@ -5,7 +5,6 @@ public class Backtracking {
 
     private int totalPieces;
     private HashMap<String, Integer> machines;
-    private ArrayList<String> machinesList;
     private HashMap<String, Integer> solution;
     private HashMap<String, Integer> bestSolution;
     private int states;
@@ -13,36 +12,47 @@ public class Backtracking {
     public Backtracking(HashMap<String, Integer> machines, Integer totalPieces) {
         this.totalPieces = totalPieces;
         this.machines = machines;
-        this.machinesList = new ArrayList<>();
-        this.machinesList.addAll(machines.keySet());
         this.solution = new HashMap<>();
         this.bestSolution = new HashMap<>();
     }
 
     public Backtracking solve() {
 
-        solve(0, 0);
+        solve(machines.keySet().stream().findFirst().get(), 0);
 
         return this;
 
     }
 
-    private void solve(int currentMachine, int sum) {
+    private void solve(String currentMachine, int sum) {
         //SE AGREGA LA MÁQUINA ACTUAL A LA SOLUCIÓN
-        this.solution.put(machinesList.get(currentMachine), machines.get(currentMachine));
+        this.solution.put(currentMachine, machines.get(currentMachine));
         //SE SUMA SU CAPACIDAD A LA SUMA TOTAL
-        sum += machines.get(currentMachine);
+        sum = sum + machines.get(currentMachine);
+
+
+        System.out.println("sum = " + sum + ", " + solution.toString());
 
         //CONDICIÓN DE CORTE: QUE LA CAPACIDAD TOTAL DE LAS MÁQUINAS SEA MAYOR O IGUAL A LA CAPACIDAD NECESARIA
-        if (sum >= totalPieces) {
-            if (solution.size() < bestSolution.size()) bestSolution = solution;
+        if (sum >= totalPieces){
+            //SI LA MEJOR SOLUCIÓN ESTÁ VACÍA (TODAVÍA NO HAY NINGUNA)
+            //O SI LA SOLUCIÓN ACTUAL ES MÁS CHICA QUE LA MEJOR ENCONTRADA HASTA EL MOMENTO, SE REEMPLAZA
+            if ((bestSolution.size() == 0) || (solution.size() < bestSolution.size())) {
+                System.out.println("------------------------> nueva solución <------------------------");
+                System.out.println(solution.toString());
+                bestSolution = solution;
+            }
         }
+        //SI NO CUMPLE LA CONDICIÓN DE CORTE...
         else {
-            solve(currentMachine, sum);//gg ez
-            if (currentMachine + 1 <= machinesList.size()-1) solve(currentMachine + 1, sum);
+
+            for (String m : machines.keySet()) {
+                this.solve(m, sum);
+                this.solution.remove(m);
+            }
+
         }
 
-        solution.remove(currentMachine);
 
     }
 

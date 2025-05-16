@@ -10,7 +10,7 @@ public class Main {
         int totalPieces = CSVreader.getTotalPieces();
         HashMap<String, Integer> machines = CSVreader.fillMap();
 
-        //System.out.println(machines.toString());
+        System.out.println(machines.toString());
 
         //SE CREAN LAS CLASES BACKTRACKING Y GREEDY PARA RESOLVER LAS CONSIGNAS
         Backtracking backtracking = new Backtracking(machines, totalPieces);
