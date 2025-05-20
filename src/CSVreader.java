@@ -1,6 +1,9 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class CSVreader {
 
@@ -13,16 +16,17 @@ public class CSVreader {
         this.filePath = filePath;
     }
 
-    public HashMap<String, Integer> fillMap() {
+    public LinkedHashMap<String, Integer> fillMap() {
         try {
 
             reader = new BufferedReader(new FileReader(this.filePath));
-            HashMap<String, Integer> temp = new HashMap<>();
+
+            LinkedHashMap<String, Integer> map = new LinkedHashMap<>();
 
             while ((line = reader.readLine()) != null) {
 
                 fragment = line.split(";");
-                if (fragment.length == 2) temp.put(fragment[0], Integer.parseInt(fragment[1]));
+                if (fragment.length == 2) map.put(fragment[0], Integer.parseInt(fragment[1]));
 
             }
 
@@ -30,12 +34,13 @@ public class CSVreader {
             line = null;
             fragment = null;
 
-            return temp;
+            return map;
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
 
     public int getTotalPieces() {
         try {

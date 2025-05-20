@@ -1,4 +1,4 @@
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Main {
 
@@ -8,7 +8,7 @@ public class Main {
         CSVreader CSVreader = new CSVreader("./data.csv");
 
         int totalPieces = CSVreader.getTotalPieces();
-        HashMap<String, Integer> machines = CSVreader.fillMap();
+        LinkedHashMap<String, Integer> machines = CSVreader.fillMap();
 
         System.out.println(machines.toString());
 
@@ -16,7 +16,7 @@ public class Main {
         Backtracking backtracking = new Backtracking(machines, totalPieces);
         backtracking.solve();
 
-        System.out.println(backtracking.getBestSolution().toString());
+        System.out.println("SOLUCIÓN FINAL (SIGMA):" + backtracking.getBestSolution().toString());
 
     }
 
