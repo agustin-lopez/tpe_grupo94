@@ -13,10 +13,11 @@ public class Main {
         System.out.println(machines.toString());
 
         //SE CREAN LAS CLASES BACKTRACKING Y GREEDY PARA RESOLVER LAS CONSIGNAS
-        Backtracking backtracking = new Backtracking(machines, totalPieces);
-        backtracking.solve();
+        Backtracking backtracking = new Backtracking();
+        //GREEDY NO EXISTE XD
 
-        System.out.println("SOLUCIÓN FINAL (SIGMA):" + backtracking.getBestSolution().toString());
+        backtracking.solve(machines, totalPieces);
+
 
     }
 
