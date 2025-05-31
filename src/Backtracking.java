@@ -4,16 +4,19 @@ import java.util.LinkedHashMap;
 public class Backtracking {
 
     private int totalPieces;
-    private HashMap<String, Integer> machines;
-    private HashMap<String, Integer> solution;
-    private HashMap<String, Integer> bestSolution;
+    private LinkedHashMap<String, Integer> machines;
+    private ArrayList<String> bestSolution;
+    private int waste;
     private int states;
+    private ArrayList<String> machinesList;
+
 
     public Backtracking() {
         this.totalPieces = 0;
         this.waste = 0;
         this.machines = new LinkedHashMap<>();
         this.bestSolution = new ArrayList<>();
+        this.machinesList = new ArrayList<>();
     }
 
     //GETTERS
@@ -21,8 +24,6 @@ public class Backtracking {
     public int getStates() { return this.states; }
 
     public int getWaste() { return this.waste; }
-
-    public int getTotalPieces() { return this.waste; }
 
     public ArrayList<String> getBestSolution() { return this.bestSolution; }
 
@@ -45,9 +46,16 @@ public class Backtracking {
         this.totalPieces = totalPieces;
         this.waste = totalPieces;
 
+        for(String m : machines.keySet()){
+            machinesList.add(m);
+        }
+
+
         //POR CADA MÁQUINA DE LA LISTA, SE LLAMA AL MÉTODO RECURSIVO
-        for (String m : machines.keySet()) {
-            solve(m, 0, new ArrayList<>());
+        int i = 0;
+        while (i <= machinesList.size()-1) {
+            this.solve(i, 0, new ArrayList<>());
+            i++;
         }
 
         this.print();
@@ -57,14 +65,19 @@ public class Backtracking {
     //ESTA SOLUCIÓN TOMA COMO PRIORIDAD QUE SE DESPERDICIE LA MENOR CANTIDAD DE PIEZAS POSIBLES.
     //CUANDO ENCUENTRA UNA NUEVA SOLUCIÓN VÁLIDA QUE TIENE EL MISMO DESPERDICIO DE PIEZAS QUE LE MEJOR SOLUCIÓN,
     //SE QUEDA CON LA QUE USE MENOS CANTIDAD DE MÁQUINAS
-    private void solve(String currentMachine, int sum, ArrayList<String> solution) {
+
+    //-EL ÁRBOL DE EXPLORACIÓN SE GENERA A PARTIR DEL AGREGADO DE TODAS LAS MÁQUINAS DISPONIBLES PARA ANALIZAR TODAS LAS COMBINACIONES POSIBLES.
+    //-LOS ESTADOS SE CONSIDERAN "FINALES" CUANDO LA CAPACIDAD TOTAL DE LAS MÁQUINAS SELECCIONADAS LLEGA (O SUPERA) LA CANTIDAD DE PIEZAS A FABRICAR.
+    //-LOS ESTADOS SE CONSIDERAN "SOLCUIÓN" CUANDO SE LLEGA A UNA SOLUCIÓN FINAL QUE DESPERDICIE LA MENOR CANTIDAD DE PIEZAS,
+    // Y TENGA UN TAMAÑO MENOR A LA ANTERIOR (EN CASO DE QUE TENGAN EL MISMO DESPERDICIO)
+    private void solve( int machinePos, int sum, ArrayList<String> solution) {
 
         //SE SUMA UN ESTADO AL CONTADOR
         this.states++;
         //SE AGREGA LA MÁQUINA ACTUAL A LA SOLUCIÓN
-        solution.add(currentMachine);
+        solution.add(machinesList.get(machinePos));
         //SE SUMA SU CAPACIDAD DE FABRICACIÓN A LA SUMA TOTAL
-        sum = sum + machines.get(currentMachine);
+        sum = sum + machines.get(machinesList.get(machinePos));
 
         System.out.println(solution + ", sum = " + sum);
 
@@ -95,10 +108,10 @@ public class Backtracking {
         //SI NO CUMPLE LA CONDICIÓN DE CORTE...
         else {
             //POR CADA MÁQUINA DE LA LISTA...
-            for (String m : machines.keySet()) {
-                //SE LLAMA RECURSIVAMENTE A ESTE MÉTODO
-                this.solve(m, sum, solution);
-                //Y CUANDO VUELVE, SE SACA ESA MÁQUINA DE LA SOLUCIÓN
+
+            while (machinePos <= machinesList.size()-1) {
+                this.solve(machinePos, sum, solution);
+                machinePos++;
                 solution.removeLast();
             }
 

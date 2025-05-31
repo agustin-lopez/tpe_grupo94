@@ -14,11 +14,11 @@ public class Main {
 
         //SE CREAN LAS CLASES BACKTRACKING Y GREEDY PARA RESOLVER LAS CONSIGNAS
         Backtracking backtracking = new Backtracking();
-        //GREEDY NO EXISTE XD
+        Greedy greedy = new Greedy();
 
+        //SE IMPRIMEN LAS SOLUCIONES FINALES
         backtracking.solve(machines, totalPieces);
-
-
+        greedy.solve(machines, totalPieces);
     }
 
 }
