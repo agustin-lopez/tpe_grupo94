@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -37,10 +38,11 @@ public class Greedy {
 
     public void solve(LinkedHashMap<String, Integer> machines, int totalPieces) {
 
+
         this.clear();
         this.sort(machines);
+        this.machines.putAll(machines);
         this.totalPieces = totalPieces;
-
 
         for(String m : this.machines.keySet()){
             machinesList.add(m);
@@ -53,80 +55,80 @@ public class Greedy {
 
     private void solve() {
 
-
+        int m = -1;
         int total = 0;
 
         //MIENTRAS QUE LA CANTIDAD DE PIEZAS ACUMULADAS NO SUPERE LA CANTIDAD DE PIEZAS A FABRICAR...
-        while (total < this.totalPieces) {
-            //SE SELECCIONA LA POSICIÓN DE MEJOR MÁQUINA DISPONIBLE, ENVIANDO COMO PARÁMETRO LA CANTIDAD DE PIEZAS QUE QUEDA POR FABRICAR
-            int m = this.select(totalPieces - total);
-            //SI LA POSICIÓN ES -1, SIGNIFICA QUE TODAS LAS MÁQUINAS DESPERDICIAN PIEZAS...
-            if (m == -1) {
-                //ENTONCES SE AGREGA LA PRIMERA DE LA LISTA, QUE ES LA DE MENOR CAPACIDAD DE FABRICACIÓN (POR ENDE, LA QUE MENOS DESPERDICIA)
-                this.solution.add(machinesList.getFirst());
-                //Y SE SUMA AL TOTAL DE PIEZAS
-                total += machines.get(machinesList.getFirst());
-            }
-            //SI NO ES -1, SIGNIFICA QUE LA MÁQUNIA SELECCIONADA NO EXCEDE EL LÍMITE...
-            else
+        while (total < this.totalPieces && !machinesList.isEmpty()) {
+
+            //SE SELECCIONA LA POSICIÓN DE MEJOR MÁQUINA DISPONIBLE, ENVIANDO COMO PARÁMETRO LA CANTIDAD DE PIEZAS QUE QUEDAN POR FABRICAR
+            m = this.select(totalPieces - total);
+            //SI NO ES -1, SIGNIFICA QUE LA MÁQUNIA SELECCIONADA NO EXCEDE EL LÍMITE DE PRODUCCIÓN...
+            if(m != -1){
                 //SE AGREGA A LA SOLUCIÓN
                 this.solution.add(machinesList.get(m));
                 //Y SE SUMA AL TOTAL DE PIEZAS
                 total+= machines.get(machinesList.get(m));
+            }
         }
-
     }
 
     private int select(int diff) {
 
-        //INICIALIZAMOS EL INDICE CON EL TAMAÑO DEL ARREGLO DE MAQUINAS
-        int i = this.machinesList.size()-1;
-        int selected = -1;
-        boolean stop = false;
+        this.candidates++;
 
-        //MIENTRAS EL INDICE SEA MAYOR A 0 Y NO SE ENCONTRÓ UNA SOLUCION
-        while(i > 0 && !stop) {
-            //EN CASO DE QUE EL ESPACIO DE LA MAQUINA SEA MENOR O IGUAL A LOS RESTOS...
-            if (this.machines.get(machinesList.get(i)) <= diff) {
-                //SUMAMOS LOS CANDIDATOS VISTOS Y LA TOMAMOS COMO LA MEJOR
-                this.candidates++;
-                selected = i;
-                stop = true;
-            }
-            i--;
+        if (machines.get(machinesList.getFirst()) > diff) {
+            //SI LA PRIMER MÁQUINA SE PASA DE LAS PIEZAS A PRODUCIR, SE BORRA
+            machines.remove(machinesList.getFirst());
+            machinesList.removeFirst();
+            //Y RETORNA -1
+            return -1;
         }
 
-        //RETORNAMOS LA MEJOR MAQUINA ELEGIDA PARA LA OPERACION
-        return selected;
+        return 0;
+
     }
 
     private void sort(LinkedHashMap<String, Integer> machines){
         //ORDENAMOS LAS MAQUINAS POR SU CAPACIDAD DE FABRICACIÓN PARA FACILITAR LA BUSQUEDA DE LA MEJOR...
         Map<String, Integer> sorted = machines.entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByValue())
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
-                        (e1, e2) -> e1,
+                        (e1, e2) -> e2,
                         LinkedHashMap::new
                 ));
 
+        this.machines.clear();
         this.machines.putAll(sorted);
+
 
     }
 
     private void print() {
-        System.out.println();
-        System.out.println("PIECES TO BE FABRICATED: " + this.totalPieces);
-        System.out.print("BEST SOLUTION FOUND: ");
 
-        for (String m : solution) {
-            System.out.print(m + " (" + this.machines.get(m) + ") ");
+        System.out.println();
+
+        if (this.machines.isEmpty()) {
+            System.out.println("GREEDY SOLUTION:");
+            System.out.println("NO SOLUTION FOUND");
         }
+        else {
+            System.out.println();
+            System.out.println("GREEDY SOLUTION:");
+            System.out.println("PIECES PRODUCED: " + this.totalPieces);
+            System.out.print("BEST SOLUTION FOUND: ");
 
-        System.out.println();
-        System.out.println("MACHINES CONSIDERED: " + this.getCandidates());
+            for (String m : solution) {
+                System.out.print(m + " ");
+            }
+
+            System.out.println();
+            System.out.println("MACHINES RUNNING: " + this.solution.size());
+            System.out.println("MACHINES CONSIDERED: " + this.candidates);
+        }
     }
 
 }

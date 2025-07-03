@@ -52,6 +52,7 @@ public class Backtracking {
 
 
         //POR CADA MÁQUINA DE LA LISTA, SE LLAMA AL MÉTODO RECURSIVO
+        // (PARA EVITAR ÁRBOLES REPETIDOS)
         int i = 0;
         while (i <= machinesList.size()-1) {
             this.solve(i, 0, new ArrayList<>());
@@ -74,16 +75,11 @@ public class Backtracking {
 
         //SE SUMA UN ESTADO AL CONTADOR
         this.states++;
-        //SE AGREGA LA MÁQUINA ACTUAL A LA SOLUCIÓN
-        solution.add(machinesList.get(machinePos));
-        //SE SUMA SU CAPACIDAD DE FABRICACIÓN A LA SUMA TOTAL
-        sum = sum + machines.get(machinesList.get(machinePos));
-
-        System.out.println(solution + ", sum = " + sum);
 
         //CONDICIÓN DE CORTE: QUE LA CAPACIDAD TOTAL DE LAS MÁQUINAS EN LA SOLUCIÓN ACTUAL
         //SEA MAYOR O IGUAL A LA CANTIDAD DE PIEZAS A FABRICAR
         if (sum >= totalPieces) {
+            System.out.println(solution + ", sum = " + sum);
             //SE CALCULA CUÁNTAS PIEZAS SE DESPERDICIAN
             int currentWaste = sum - totalPieces;
             //SI EL DESPERDICIO ES MENOR AL DE LA MEJOR SOLUCIÓN ENCONTRADA HASTA EL MOMENTO...
@@ -107,6 +103,10 @@ public class Backtracking {
         }
         //SI NO CUMPLE LA CONDICIÓN DE CORTE...
         else {
+            //SE AGREGA LA MÁQUINA ACTUAL A LA SOLUCIÓN
+            solution.add(machinesList.get(machinePos));
+            //SE SUMA SU CAPACIDAD DE FABRICACIÓN A LA SUMA TOTAL
+            sum = sum + machines.get(machinesList.get(machinePos));
             //POR CADA MÁQUINA DE LA LISTA...
 
             while (machinePos <= machinesList.size()-1) {
@@ -120,8 +120,13 @@ public class Backtracking {
     }
 
     public void print() {
+
+        int total = this.totalPieces + this.waste;
+
         System.out.println();
-        System.out.println("PIECES TO BE FABRICATED: " + this.totalPieces);
+
+        System.out.println("BACKTRACKING SOLUTION:");
+        System.out.println("PIECES PRODUCED: " + total);
         System.out.print("BEST SOLUTION FOUND: ");
 
         for (String m : bestSolution) {
@@ -129,6 +134,7 @@ public class Backtracking {
         }
 
         System.out.println();
+        System.out.println("MACHINES RUNNING: " + this.bestSolution.size());
         System.out.println("PIECES WASTED: " + this.getWaste());
         System.out.println("STATES GENERATED: " + this.getStates());
     }
